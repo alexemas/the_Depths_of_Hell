@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 5c0f78e4acfe21a4594760304164796e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - heartsParent: {instanceID: 0}
+  - heartContainerPrefab: {fileID: 1000013667988280, guid: 677e3f20f0ab76a45bd59d5b73b0b446, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

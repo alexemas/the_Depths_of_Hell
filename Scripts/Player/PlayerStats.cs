@@ -1,0 +1,98 @@
+﻿using UnityEngine;
+
+public class PlayerStats : MonoBehaviour
+{
+    public delegate void OnHealthChangedDelegate();
+    public OnHealthChangedDelegate onHealthChangedCallback;
+
+    #region Sigleton
+    private static PlayerStats instance;
+    public static PlayerStats Instance
+    {
+        get
+        {
+            if (instance == null)
+                instance = FindObjectOfType<PlayerStats>();
+            return instance;
+        }
+    }
+    #endregion
+
+    [SerializeField] public float health;
+    [SerializeField] public float maxHealth;
+    [SerializeField] private float maxTotalHealth;
+    [SerializeField] private GameObject _menuDeath;
+    private Animator anim;
+
+    public float Health { get { return health; } }
+    public float MaxHealth { get { return maxHealth; } }
+    public float MaxTotalHealth { get { return maxTotalHealth; } }
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
+
+    public bool IsAnimationPlaying(string animationName)
+    {
+        var animatorStateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        if (animatorStateInfo.IsName(animationName))
+            return true;
+
+        return false;
+    }
+
+    public void Heal(float health)
+    {
+        this.health += health;
+        ClampHealth();
+    }
+
+    public void TakeDamage(float dmg)
+    {
+        health -= dmg;
+        ClampHealth();
+    }
+
+    public void AddHealth()
+    {
+        if (maxHealth < maxTotalHealth)
+        {
+            maxHealth += 1;
+
+            if (onHealthChangedCallback != null)
+                onHealthChangedCallback.Invoke();
+        }   
+    }
+    public void DelHealth()
+    {
+        if (maxHealth < maxTotalHealth)
+        {
+            maxHealth -= 1;
+
+            if (onHealthChangedCallback != null)
+                onHealthChangedCallback.Invoke();
+        }
+    }
+
+    void ClampHealth()
+    {
+        health = Mathf.Clamp(health, 0, maxHealth);
+
+        if (onHealthChangedCallback != null)
+            onHealthChangedCallback.Invoke();
+    }
+
+    private void Update()
+    {
+        if (health <= 0)
+        {
+            if (IsAnimationPlaying("Death") == true)
+            {
+                _menuDeath.SetActive(true);
+                Time.timeScale = 0;
+            }
+        }
+        anim.SetFloat("Healh", health);
+    }
+}
